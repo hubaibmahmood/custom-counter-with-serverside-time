@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <title>Custom Clock</title>
+</head>
+<body>
+<div class="text-center mt-5">
+  <h1 class="clock" id="clock"></h1>
+</div>
+
+<script>
+  function updateClock() {
+  // Define the custom time units
+  const secondsPerMinute = 90;
+  const minutesPerHour = 90;
+  const hoursPerDay = 18;
+  const minutesPerDay = minutesPerHour * hoursPerDay;
+  const secondsPerDay = secondsPerMinute * minutesPerDay;
+  const daysPerMonth = 45;
+  const hoursPerMonth = hoursPerDay * daysPerMonth;
+  const minutesPerMonth = minutesPerHour * hoursPerMonth;
+  const secondsPerMonth = secondsPerMinute * minutesPerMonth;
+  const monthsPerYear = 8;
+  const daysPerYear = daysPerMonth * monthsPerYear;
+  const hoursPerYear = hoursPerMonth * monthsPerYear;
+  const minutesPerYear = minutesPerMonth * monthsPerYear;
+  const secondsPerYear = secondsPerMonth * monthsPerYear;
+  const secondsPerHour = secondsPerMinute * minutesPerHour;
+  const daysPerReset = 9720000; // 9,720,000 days until days reset
+  const turnsPerReset = 216000; // 216,000 turns until turns reset
+  const raysPerReset = 9720000; // 9,720,000 rays until rays reset
+  const solarCyclesPerReset = 27000; // 27,000 solar cycles until solar cycles reset
+
+  
+   // MARK: HERE YOU CAN "CALIBRATE" THE CLOCK. BEFORE YOU DO SO CHECK WHAT HOUR IT HAS AND
+    // BUILD THE DIFFERENCE, EXAMPLE HH=13 AND YOU WANT 7, SET initialHours = -6
+  const initialSolarCycles = 25;
+  const initialYears = 2;
+  const initialMonths = 21;
+  const initialDays = 951;
+  const initialHours = -11;
+  const initialMinutes = 10;
+  const initialSeconds = 0;
+
+  // Get the current time and adjust it to be 3 hours behind
+
+  // Calculate the total seconds since the epoch (1970-01-01) with the adjusted time
+  const now = new Date();
+  const currentTime = now.getTime() - 3 * 60 * 60 * 1000; // 3 hours behind
+  const totalSeconds = Math.floor(currentTime / 1000);
+
+  // Calculate the custom time units
+  const totalCustomSeconds = totalSeconds + 3 * 60 * 60; // Adjust for 3 hours behind
+
+  // Calculate the elapsed time since the starting point
+  // Calculate the elapsed time since the starting point
+const elapsedSeconds = totalCustomSeconds % secondsPerMinute;
+const elapsedMinutes = Math.floor((totalCustomSeconds / secondsPerMinute) % minutesPerHour);
+const elapsedHours = Math.floor((totalCustomSeconds / (secondsPerMinute * minutesPerHour)) % hoursPerDay);
+
+  // Calculate the current values for solar cycle, turn (month), and ray (day)
+  const currentSolarCycle = initialSolarCycles + Math.floor(elapsedSeconds / (secondsPerDay * daysPerYear * solarCyclesPerReset));
+  const currentYear = initialYears + Math.floor(elapsedSeconds / secondsPerYear);
+  const currentMonth = initialMonths + Math.floor((elapsedSeconds % secondsPerYear) / secondsPerMonth);
+  const currentDay = initialDays + Math.floor((elapsedSeconds % secondsPerMonth) / secondsPerDay);
+  const currentHour = initialHours + elapsedHours;
+  const currentMinute = initialMinutes + elapsedMinutes;
+  const currentSecond = initialSeconds + elapsedSeconds;
+
+  // Format the time
+  const formattedTime = padNumber(currentSolarCycle, 2) + '-' + padNumber(currentYear, 5) + '-' + padNumber(currentMonth, 6) + '-' + padNumber(currentDay, 7) + '-' + padNumber(currentHour, 2) + '-' + padNumber(currentMinute) + '-' + padNumber(currentSecond);
+
+  // Update the clock element
+  document.getElementById('clock').textContent = formattedTime;
+}
+
+// Rest of the code remains the same...
+
+
+// Function to pad numbers with leading zeros
+function padNumber(num, length) {
+  return String(num).padStart(length, '0');
+}
+
+// Update the clock every second
+setInterval(updateClock, 1000);
+
+</script>
+
+</body>
+</html>
